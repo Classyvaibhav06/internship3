@@ -30,9 +30,58 @@
         <p> dilvery
             garurinty</p>
         <button class="btn">Get started</button>
+        <section class="contact-section" id="contact">
+            <h2 class="contact-title">Get in touch</h2>
+            <p class="contact-sub">Have a question or want to work together? Drop a message.</p>
+
+            <form id="contactForm" class="contact-form" novalidate>
+                <input type="text" name="name" placeholder="Your name" required>
+                <input type="email" name="email" placeholder="Your email" required>
+                <textarea name="message" placeholder="Your message" rows="5" required></textarea>
+                <button class="btn" type="submit">Send message</button>
+            </form>
+
+            <p id="formStatus" class="form-status"></p>
+        </section>
     </div>
 
+    <script>
+        const form = document.getElementById('contactForm');
+        const status = document.getElementById('formStatus');
 
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            status.textContent = 'Sending…';
+            status.className = 'form-status';
+
+            // Gather form data
+            const data = Object.fromEntries(new FormData(form));
+
+            try {
+                // Send to backend
+                const res = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (res.ok) {
+                    status.textContent = '✅ Thanks! Your message was sent.';
+                    status.classList.add('success');
+                    form.reset();
+                } else {
+                    status.textContent = '❌ ' + (result.error || 'Something went wrong');
+                    status.classList.add('error');
+                }
+            } catch (err) {
+                status.textContent = '❌ Network error. Please try again.';
+                status.classList.add('error');
+                console.error(err);
+            }
+        });
+    </script>
 </body>
 
 </html>

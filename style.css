@@ -62,7 +62,7 @@ body {
 .hero1 {
     position: absolute;
     margin-top: 20%;
-    margin-left: 35%;
+    margin-left: 25%;
     display: flex;
     justify-content: center;
     /* or space-between, space-around */
@@ -110,4 +110,25 @@ span {
 
 .btn:hover {
     background-color: #383838;
+}
+
+.contact-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+input {
+    border: 2px solid black;
+    border-radius: 5px;
+    height: 20px;
+    width: 200px;
+}
+
+textarea {
+    border: 2px solid black;
+    border-radius: 5px;
+    height: 50px;
+    width: 200px;
 }
