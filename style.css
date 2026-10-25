@@ -83,6 +83,8 @@ body {
 .hero1 p {
     font-family: Arial, Helvetica, sans-serif;
     color: #3f3f3f;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 span {
@@ -90,4 +92,22 @@ span {
     font-weight: 500;
     font-size: 3rem;
     margin-right: 0%;
+}
+
+.btn {
+
+    height: 33px;
+    width: 109px;
+    background-color: #212121;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    /* pill shape */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background-color: #383838;
 }
