@@ -1,20 +1,29 @@
-// routes/contacts.js
 const express = require('express');
 const router = express.Router();
 const Contact = require('../models/Contact');
 
-// ─── CREATE ─────────────────────────────────────────────
+// 🔒 Middleware: Block if no cookie
+const requireAdmin = (req, res, next) => {
+    if (req.cookies && req.cookies.adminToken === 'logged_in') {
+        next();
+    } else {
+        res.status(401).json({ error: 'Unauthorized. Please log in.' });
+    }
+};
+
+// 1. Public: Submit a message
 router.post('/', async (req, res) => {
     try {
-        const contact = await Contact.create(req.body);
-        res.status(201).json(contact);
+        const { name, email, message } = req.body;
+        const contact = await Contact.create({ name, email, message });
+        res.status(201).json({ success: true, contact });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ success: false, error: err.message });
     }
 });
 
-// ─── READ ALL ───────────────────────────────────────────
-router.get('/', async (req, res) => {
+// 2. Protected: Read all messages
+router.get('/', requireAdmin, async (req, res) => { // 👈 requireAdmin is here!
     try {
         const contacts = await Contact.find().sort({ createdAt: -1 });
         res.json(contacts);
@@ -23,38 +32,12 @@ router.get('/', async (req, res) => {
     }
 });
 
-// ─── READ ONE ───────────────────────────────────────────
-router.get('/:id', async (req, res) => {
-    try {
-        const contact = await Contact.findById(req.params.id);
-        if (!contact) return res.status(404).json({ error: 'Not found' });
-        res.json(contact);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-});
-
-// ─── UPDATE ─────────────────────────────────────────────
-router.put('/:id', async (req, res) => {
-    try {
-        const contact = await Contact.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true } // return updated doc + validate
-        );
-        if (!contact) return res.status(404).json({ error: 'Not found' });
-        res.json(contact);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-});
-
-// ─── DELETE ─────────────────────────────────────────────
-router.delete('/:id', async (req, res) => {
+// 3. Protected: Delete a message
+router.delete('/:id', requireAdmin, async (req, res) => { // 👈 requireAdmin is here!
     try {
         const contact = await Contact.findByIdAndDelete(req.params.id);
         if (!contact) return res.status(404).json({ error: 'Not found' });
-        res.json({ message: 'Deleted', contact });
+        res.json({ success: true, message: 'Deleted' });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }

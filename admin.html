@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+
+<body style="font-family: monospace; padding: 40px; background: #f4f4f4;">
+
+    <div
+        style="max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="margin: 0;">Admin Dashboard</h1>
+            <button onclick="logout()"
+                style="background: #333; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Logout</button>
+        </div>
+
+        <p style="color: #666;">Here are the messages from your database:</p>
+
+        <!-- This is where the messages will go -->
+        <div id="list" style="margin-top: 20px;">
+            <p style="color: blue;">Loading messages...</p>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. Tell the user we are starting
+        console.log("Admin page loaded.");
+
+        async function loadData() {
+            const list = document.getElementById('list');
+
+            try {
+                // 2. Ask the backend for data
+                const res = await fetch('/api/contacts');
+
+                // 3. Check if we are logged in
+                if (res.status === 401) {
+                    list.innerHTML = '<p style="color: red;">Not logged in. <a href="/login.html">Go to login</a></p>';
+                    return;
+                }
+
+                // 4. Convert to JSON
+                const data = await res.json();
+
+                // 5. Check if it's empty
+                if (data.length === 0) {
+                    list.innerHTML = '<p>No messages found.</p>';
+                    return;
+                }
+
+                // 6. Build the HTML
+                list.innerHTML = '';
+                data.forEach(function (msg) {
+                    const div = document.createElement('div');
+                    div.style.border = "1px solid #ccc";
+                    div.style.padding = "10px";
+                    div.style.marginBottom = "10px";
+                    div.style.borderRadius = "5px";
+
+                    div.innerHTML = `
+                        <strong>${msg.name}</strong> (${msg.email})<br>
+                        <p style="margin: 10px 0;">${msg.message}</p>
+                        <button onclick="deleteMsg('${msg._id}')" style="background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Delete</button>
+                    `;
+                    list.appendChild(div);
+                });
+
+            } catch (err) {
+                // 7. If ANYTHING fails, show it on the screen instead of a white page
+                list.innerHTML = '<p style="color: red;">Error loading messages: ' + err.message + '</p>';
+                console.error(err);
+            }
+        }
+
+        async function deleteMsg(id) {
+            if (!confirm('Delete this message?')) return;
+            try {
+                const res = await fetch('/api/contacts/' + id, { method: 'DELETE' });
+                if (res.ok) {
+                    loadData(); // Reload the list
+                } else {
+                    alert('Failed to delete');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login.html';
+        }
+
+        // Start loading the data
+        loadData();
+    </script>
+
+</body>
+
+</html>
