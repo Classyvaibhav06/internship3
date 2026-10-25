@@ -1,0 +1,58 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(255, 255, 255);
+    height: 100vh;
+    width: 100vw;
+}
+
+.hero {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+}
+
+.logo {
+    height: 50px;
+    width: 70px;
+
+}
+
+.nav {
+    height: 10%;
+    width: 100%;
+    position: fixed;
+    background-color: #ffffff;
+}
+
+.nav ul {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    margin: 0;
+    padding: 5px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.nav ul li {
+    list-style: none;
+    color: rgb(0, 0, 0);
+}
+
+.nav ul li:hover {
+    text-decoration: underline;
+    text-decoration-color: #212121;
+}
+
+.nav ul li a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+}
